@@ -16,9 +16,9 @@
 			<img src="<?php perch_path('feathers/quill/img/logo.gif'); ?>" alt="Your Logo Here" class="logo" />
 		</div>
 		<nav class="main-nav">
-			<?php perch_pages_navigation(array(
+			<?php perch_pages_navigation([
 					'levels'=>1
-				));
+				]);
 			?>
 		</nav>
 	</header>
@@ -55,13 +55,13 @@
 		        if (perch_get('cat')) {
 		            echo '<h1>Archive of: '.perch_blog_category(perch_get('cat'), true).'</h1>';
 
-		            perch_blog_custom(array(
+		            perch_blog_custom([
 							'category'   => perch_get('cat'),
 							'template'   => $template,
 							'count'      => $posts_per_page,
 							'sort'       => $sort_by,
 							'sort-order' => $sort_order,
-		                    ));
+		                    ]);
 
 		            $posts_displayed = true;
 		        }
@@ -71,13 +71,13 @@
 		        if (perch_get('tag')) {
 		            echo '<h1>Archive of: '.perch_blog_tag(perch_get('tag'), true).'</h1>';
 
-		            perch_blog_custom(array(
+		            perch_blog_custom([
 							'tag'   	 => perch_get('tag'),
 							'template'   => $template,
 							'count'      => $posts_per_page,
 							'sort'       => $sort_by,
 							'sort-order' => $sort_order,
-		                    ));
+		                    ]);
 
 		            $posts_displayed = true;
 		        }
@@ -103,7 +103,7 @@
 
 		            echo '<h1>Archive of: '.strftime($title_date_format, strtotime($date_from)).'</h1>';
 
-		            perch_blog_custom(array(
+		            perch_blog_custom([
 							'filter'     => 'postDateTime',
 							'match'      => 'eqbetween',
 							'value'      => $date_from.','.$date_to,
@@ -111,7 +111,7 @@
 							'count'      => $posts_per_page,
 							'sort'       => $sort_by,
 							'sort-order' => $sort_order,
-		                    ));
+		                    ]);
 
 		            $posts_displayed = true;
 		        }
@@ -121,18 +121,18 @@
 		        /* --------------------------- POSTS BY AUTHOR --------------------------- */
 		        if (perch_get('author')) {
 
-		        	echo '<h1>Posts by '.perch_blog_author(perch_get('author'), array(
+		        	echo '<h1>Posts by '.perch_blog_author(perch_get('author'), [
 		        											'template' => 'author_name.html',
-		        											), true).'</h1>';
+		        											], true).'</h1>';
 
 
-		        	perch_blog_custom(array(
+		        	perch_blog_custom([
 							'author'   	 => perch_get('author'),
 							'template'   => $template,
 							'count'      => $posts_per_page,
 							'sort'       => $sort_by,
 							'sort-order' => $sort_order,
-		                    ));
+		                    ]);
 
 		            $posts_displayed = true;
 		        }
@@ -147,12 +147,12 @@
 
 		      		echo '<h1>Archive</h1>';
 
-		      		perch_blog_custom(array(
+		      		perch_blog_custom([
 							'template'   => $template,
 							'count'      => $posts_per_page,
 							'sort'       => $sort_by,
 							'sort-order' => $sort_order,
-		                    ));
+		                    ]);
 
 		      	}
 

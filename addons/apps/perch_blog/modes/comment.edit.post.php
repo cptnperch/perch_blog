@@ -1,31 +1,21 @@
 <?php
-    # Side panel
-    echo $HTML->side_panel_start();
 
-    echo $HTML->para('Make any edits required to make this comment suitable to be published on the website.');
-
-    echo $HTML->side_panel_end();
-    
-    
-    # Main panel
-    echo $HTML->main_panel_start(); 
-        include('_subnav.php');    
-
-        echo $HTML->heading1('Editing a Comment');
-
-
-
-        if ($message) echo $message;    
+        echo $HTML->title_panel([
+            'heading' => $Lang->get('Editing a comment'),
+            ], $CurrentUser);
         
-    
-        echo $HTML->heading2('Comment details');
-    
-        echo $Form->form_start('content-edit', 'magnetic-save-bar');
-    
+        echo $Form->form_start('content-edit');
+
+            echo $HTML->heading2('Comment on ‘%s’', $Post->postTitle());
+
+            if ($Comment->webmention()) {
+                echo '<div class="field-wrap">'.$Lang->get('This comment is a webmention (%s)', $Comment->webmentionType()).'</div>';
+            }
+
             echo $Form->fields_from_template($Template, $details);
 
             if ($Comment->commentIP()) {
-                echo '<div class="field "><label class="label">IP Address</label><span class="input">'.long2ip($Comment->commentIP()).'</span></div>';
+                echo '<div class="field-wrap"><label class="label">IP Address</label><span class="input">'.long2ip($Comment->commentIP()).'</span></div>';
 		    }
 
     		$opts = array();
@@ -37,13 +27,9 @@
     		    		
     		echo $Form->select_field('commentStatus', 'Status', $opts, isset($details['commentStatus'])?$details['commentStatus']:false);
 		
-
+            $Form->add_another = true;
             echo $Form->submit_field('btnSubmit', 'Save', $API->app_path());
 
         echo $Form->form_end();
     
-        
-    echo $HTML->main_panel_end();
-
     
-?>

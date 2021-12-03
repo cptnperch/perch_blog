@@ -1,11 +1,8 @@
 <?php
-
-    $HTML = $API->get('HTML');
-
     // Try to update
     $Settings = $API->get('Settings');
 
-    if ($Settings->get('perch_blog_update')->val()!='5.0.1') {
+    if ($Settings->get('perch_blog_update')->val()!='5.6') {
         PerchUtil::redirect($API->app_path().'/update/');
     }
 
@@ -18,7 +15,6 @@
          $blogs = $Blogs->all();
     }
 
-    $Paging = $API->get('Paging');
     $Paging->set_per_page(15);
 
     $Blog = false;
@@ -29,7 +25,11 @@
         }
     }
     if (!$Blog) {
-        $Blog = $Blogs->find(1);
+        $Blog = $Blogs->first();
+
+        if (!$Blog) {
+            PerchUtil::redirect($API->app_path().'/update/?force=update');
+        }
     }
 
 
@@ -39,9 +39,6 @@
     $Sections = new PerchBlog_Sections($API);
     $sections = $Sections->get_by('blogID', (int)$Blog->id());
 
-
-
-	$Lang = $API->get('Lang');
 
     $posts = array();
 

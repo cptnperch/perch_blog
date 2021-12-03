@@ -1,32 +1,15 @@
 <?php
-    # Side panel
-    echo $HTML->side_panel_start();
-
-    echo $HTML->para('You can edit your post here. Set the status to Published to make the post visible on the website.');
-    echo $HTML->para('If a post has a date in the future, it will not appear on the site until that date and time.');
-
-    if (PerchUtil::count($post_templates)) {
-        echo $HTML->heading3('Post types');
-        echo $HTML->para('Different posts types can contain different content fields.');
-        echo $HTML->para('Switching a post to a different type can result in content being lost if the same fields aren\'t present in both types.');
-    }
-
-
-    echo $HTML->side_panel_end();
-
-
-    # Main panel
-    echo $HTML->main_panel_start();
-
-    include('_subnav.php');
 
     if (is_object($Post)) {
-        echo $HTML->heading1('Editing Post ‘%s’', $Post->postTitle());
+        $heading = $Lang->get('Editing Post ‘%s’', $HTML->encode($Post->postTitle()));
     }else{
-        echo $HTML->heading1('Creating a New Post');
+        $heading = $Lang->get('Creating a New Post');
     }
 
-    if ($message) echo $message;
+    echo $HTML->title_panel([
+            'heading' => $heading,
+            ], $CurrentUser);
+
 
     include(__DIR__.'/_post_smartbar.php');
 
@@ -38,18 +21,22 @@
         $template_help_html = $Template->find_help();
         if ($template_help_html) {
             echo $HTML->heading2('Help');
-            echo '<div id="template-help">' . $template_help_html . '</div>';
+            echo '<div class="template-help">' . $template_help_html . '</div>';
         }
 
         if ($template =='post.html') {
             echo $HTML->heading2('Post');
         }else{
-            echo '<h2>'.$HTML->encode(PerchUtil::filename($template, false)).'</h2>';
+            echo '<h2 class="divider"><div>'.$HTML->encode(PerchUtil::filename($template, false)).'</div></h2>';
         }
 
 
         /* ---- FORM ---- */
-        echo $Form->form_start('blog-edit', 'magnetic-save-bar');
+        $lock_key = null;
+        if (is_object($Post)) {
+            $lock_key = 'blogpost:'.$Post->id();
+        }
+        echo $Form->form_start('blog-edit', '', $lock_key);
 
 
             /* ---- FIELDS FROM TEMPLATE ---- */
@@ -110,18 +97,28 @@
 
 
             /* ---- PUBLISHING ---- */
-            $opts = array();
-            $opts[] = array('label'=>$Lang->get('Draft'), 'value'=>'Draft');
-            if ($CurrentUser->has_priv('perch_blog.post.publish')) $opts[] = array('label'=>$Lang->get('Published'), 'value'=>'Published');
-            echo $Form->select_field('postStatus', 'Status', $opts, isset($details['postStatus'])?$details['postStatus']:'Draft');
 
 
-            echo $Form->submit_field('btnSubmit', 'Save', $API->app_path());
+            if (is_object($Post)) {
+
+                $opts = array();
+                $opts[] = array('label'=>$Lang->get('Draft'), 'value'=>'Draft');
+                if ($CurrentUser->has_priv('perch_blog.post.publish')) $opts[] = array('label'=>$Lang->get('Published'), 'value'=>'Published');
+                echo $Form->select_field('postStatus', 'Status', $opts, isset($details['postStatus'])?$details['postStatus']:'Draft');
+
+                echo $Form->submit_field('btnSubmit', 'Save', $API->app_path());
+
+            } else {
+
+                echo $Form->hidden('authorID', $Author->id());
+                echo $Form->hidden('postStatus', 'Draft');
+                echo $Form->submit_field('btnSubmit', 'Create draft', $API->app_path());
+            }
+
+
+            
 
         echo $Form->form_end();
         /* ---- /FORM ---- */
 
     } // if edit_mode
-
-    echo $HTML->main_panel_end();
-
